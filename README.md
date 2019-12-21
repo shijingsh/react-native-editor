@@ -1,19 +1,19 @@
-# React Native Rich Text Editor
+# React Native Editor
 
-A fully functional Rich Text Editor for both Android and iOS, based off the [ZSSRichTextEditor](https://github.com/nnhubbard/ZSSRichTextEditor/tree/master/ZSSRichTextEditor) project. 
+for update https://github.com/wix/react-native-zss-rich-text-editor
 
 ## Installation
 
 ```
-npm i --save react-native-zss-rich-text-editor
+npm i --save react-native-editor
 ```
 
 On Android, add the following to the end of your `android/app/build.gradle`
 
 ```groovy
 project.afterEvaluate {
-    apply from: '../../node_modules/react-native-zss-rich-text-editor/htmlCopy.gradle';
-    copyEditorHtmlToAppAssets(file('../../node_modules/react-native-zss-rich-text-editor'))
+    apply from: '../../node_modules/react-native-editor/htmlCopy.gradle';
+    copyEditorHtmlToAppAssets(file('../../node_modules/react-native-editor'))
 }
 ```
 
@@ -22,7 +22,7 @@ Also, follow instructions [here](https://github.com/alinz/react-native-webview-b
 
 ## Usage
 
-`react-native-zss-rich-text-editor` exports two Components and one const dictionary:
+`react-native-editor` exports two Components and one const dictionary:
 
 ## `RichTextEditor`
 
@@ -249,4 +249,4 @@ This is a set of consts of all supported actions. These will be passed in arrays
 
 ## Attribution
 
-`react-native-zss-rich-text-editor` is a wrapper around the amazing [ZSSRichTextEditor](https://github.com/nnhubbard/ZSSRichTextEditor/tree/master/ZSSRichTextEditor) project. It also communicates with the editor using (a tiny fork) of the awesome [react-native-webview-bridge](https://github.com/alinz/react-native-webview-bridge) project.
+`react-native-editor` is a wrapper around the amazing [ZSSRichTextEditor](https://github.com/nnhubbard/ZSSRichTextEditor/tree/master/ZSSRichTextEditor) project. It also communicates with the editor using (a tiny fork) of the awesome [react-native-webview-bridge](https://github.com/alinz/react-native-webview-bridge) project.
