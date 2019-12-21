@@ -25,6 +25,9 @@ export const InjectedMessageHandler = `
         case '${actions.setContentHtml}':
           zss_editor.setContentHTML(action.data);
           break;
+        case '${actions.appendContentHTML}':
+          zss_editor.appendContentHTML(action.data);
+          break;          
         case '${actions.blurTitleEditor}':
           zss_editor.blurTitleEditor();
           break;

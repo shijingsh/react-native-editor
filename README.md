@@ -92,6 +92,7 @@ To adjust content, placeholders or css, use these methods
 *  `setCustomCSS(css) `
 *  `setTitleHTML(html)` 
 *  `setContentHTML(html) `
+*  `appendContentHTML(html) `
 
 These methods are used when adding content such as images or links that will intefere with the cursor position. `prepareInsert` saves  the current selection, and `restoreSelection` will replace it after the insertion is done. It is called implicitly by `insertImage` and `insertLink` so they should probably never be called directly.
 
@@ -199,7 +200,8 @@ This is a set of consts of all supported actions. These will be passed in arrays
 
 	{
 		setTitleHtml: 'SET_TITLE_HTML',
-	  	setContentHtml: 'SET_CONTENT_HTML',
+	  	setContentHtml: 'APPEND_CONTENT_HTML',
+	  	appendContentHTML: 'SET_CONTENT_HTML',
 	  	getTitleHtml: 'GET_TITLE_HTML',
 	  	getTitleText: 'GET_TITLE_TEXT',
 	 	getContentHtml: 'GET_CONTENT_HTML',

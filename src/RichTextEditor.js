@@ -379,7 +379,9 @@ export default class RichTextEditor extends Component {
   setContentHTML(html) {
     this._sendAction(actions.setContentHtml, html);
   }
-
+  appendContentHTML(html) {
+    this._sendAction(actions.appendContentHTML, html);
+  }
   blurTitleEditor() {
     this._sendAction(actions.blurTitleEditor);
   }
