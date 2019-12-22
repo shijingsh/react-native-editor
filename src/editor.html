@@ -917,7 +917,7 @@
 				whenPastingInsertAsPlainText('zss_editor_title');
 				whenPastingInsertAsPlainText('zss_editor_content');
 
-				zss_editor.focusTitle();
+				//zss_editor.focusTitle();
 
 				setTimeout(function() {
 					WebViewBridge.send(JSON.stringify({type: 'ZSS_INITIALIZED'}))
@@ -1577,7 +1577,15 @@
 			}
 
 			zss_editor.focusContent = function() {
-				$('#zss_editor_content').focus();
+				//$('#zss_editor_content').focus();
+                var editor = $('#zss_editor_content');
+                var range = document.createRange();
+                range.selectNodeContents(editor.get(0));
+                range.collapse(false);
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                editor.focus();
 			}
 
 			zss_editor.focusTitle = function() {
