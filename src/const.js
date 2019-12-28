@@ -2,7 +2,6 @@ export const actions = {
   enableOnChange: 'ENABLE_ON_CHANGE',
   setTitleHtml: 'SET_TITLE_HTML',
   setContentHtml: 'SET_CONTENT_HTML',
-  appendContentHTML: 'APPEND_CONTENT_HTML',
   getTitleHtml: 'GET_TITLE_HTML',
   getTitleText: 'GET_TITLE_TEXT',
   toggleTitle: 'TOGGLE_TITLE',
