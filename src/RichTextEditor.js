@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import WebViewBridge from 'react-native-webview-bridge';
 import {InjectedMessageHandler} from './WebviewMessageHandler';
-import {actions, messages} from './const';
+import {actions, messages,html} from './const';
 import {Modal, View, Text, StyleSheet, TextInput, TouchableOpacity, Platform, PixelRatio, Keyboard, Dimensions} from 'react-native';
 
 const injectScript = `
@@ -305,7 +305,7 @@ export default class RichTextEditor extends Component {
           ref={(r) => {this.webviewBridge = r}}
           onBridgeMessage={(message) => this.onBridgeMessage(message)}
           injectedJavaScript={injectScript}
-          source={pageSource}
+          source={{html: html,baseUrl: '', method: 'GET', headers: { 'Cache-Control':'no-cache'}}}
           onLoad={() => this.init()}
         />
         {this._renderLinkModal()}

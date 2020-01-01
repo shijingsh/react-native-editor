@@ -130,7 +130,7 @@ export default class RichTextToolbar extends Component {
               renderItem={(obj) => {
                 return this._renderAction(obj)
               }}
-              numColumns ={5}
+              numColumns ={10}
               horizontal={false}
           />
         </View>
