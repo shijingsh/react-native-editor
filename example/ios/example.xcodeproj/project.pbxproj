@@ -43,6 +43,8 @@
 		F01C8383A7B64F52B99BF0A3 /* call_recordTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = C10218860D3947D2BE5BE79C /* call_recordTests.xctest */; };
 		2FBB0BF0656C4580A8C86BEF /* call_record-tvOS.app in Resources */ = {isa = PBXBuildFile; fileRef = 2155CA6EFE30447C859B7CC7 /* call_record-tvOS.app */; };
 		151DB9F1B68F4E8F98319BE7 /* call_record-tvOSTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = CE5B4BB6EA6E42E5816CE2DF /* call_record-tvOSTests.xctest */; };
+		8BA103A380084E6D9BEAD71B /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6B7748095CC43419C0F6970 /* libRNCWebView.a */; };
+		C93587FE089244B6AFA95072 /* libReact-Native-Webview-Bridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B2540C070048D182B56730 /* libReact-Native-Webview-Bridge.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -355,6 +357,10 @@
 		C10218860D3947D2BE5BE79C /* call_recordTests.xctest */ = {isa = PBXFileReference; name = "call_recordTests.xctest"; path = "call_recordTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
 		2155CA6EFE30447C859B7CC7 /* call_record-tvOS.app */ = {isa = PBXFileReference; name = "call_record-tvOS.app"; path = "call_record-tvOS.app"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.application; explicitFileType = undefined; includeInIndex = 0; };
 		CE5B4BB6EA6E42E5816CE2DF /* call_record-tvOSTests.xctest */ = {isa = PBXFileReference; name = "call_record-tvOSTests.xctest"; path = "call_record-tvOSTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
+		AA52ED9B9E4E4B49951B179D /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; name = "RNCWebView.xcodeproj"; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A6B7748095CC43419C0F6970 /* libRNCWebView.a */ = {isa = PBXFileReference; name = "libRNCWebView.a"; path = "libRNCWebView.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		B7E8EFAD4CB64D8BB6ABC2DC /* React-Native-Webview-Bridge.xcodeproj */ = {isa = PBXFileReference; name = "React-Native-Webview-Bridge.xcodeproj"; path = "../node_modules/react-native-webview-bridge/ios/React-Native-Webview-Bridge.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D4B2540C070048D182B56730 /* libReact-Native-Webview-Bridge.a */ = {isa = PBXFileReference; name = "libReact-Native-Webview-Bridge.a"; path = "libReact-Native-Webview-Bridge.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -385,6 +391,8 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				33C67210AD0640A192A0D8D4 /* call_record.app in Resources */,
 				F01C8383A7B64F52B99BF0A3 /* call_recordTests.xctest in Resources */,
+				8BA103A380084E6D9BEAD71B /* libRNCWebView.a in Frameworks */,
+				C93587FE089244B6AFA95072 /* libReact-Native-Webview-Bridge.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -577,6 +585,8 @@
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				7710AFAF6D2943CEA42E8748 /* call_record.xcodeproj */,
+				AA52ED9B9E4E4B49951B179D /* RNCWebView.xcodeproj */,
+				B7E8EFAD4CB64D8BB6ABC2DC /* React-Native-Webview-Bridge.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1208,10 +1218,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Debug;
@@ -1237,10 +1251,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Release;
@@ -1264,6 +1282,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Debug;
@@ -1286,6 +1306,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Release;
@@ -1319,10 +1341,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Debug;
@@ -1356,10 +1382,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Release;
@@ -1392,10 +1422,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Debug;
@@ -1428,10 +1462,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)\..\node_modules\react-native-call-record\ios\call_record",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview-bridge\ios",
 				);
 			};
 			name = Release;
