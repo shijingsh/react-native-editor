@@ -5,7 +5,7 @@ import {
     View,
     Platform
 } from 'react-native';
-import {RichTextEditor, RichTextToolbar} from 'react-native-editor';
+import {RichTextEditor, RichTextToolbar} from 'react-native-zss-rich-text-editor';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 export default class RichTextExample extends Component {
@@ -42,15 +42,15 @@ export default class RichTextExample extends Component {
     async getHTML() {
         const titleHtml = await this.richtext.getTitleHtml();
         const contentHtml = await this.richtext.getContentHtml();
-        //alert(titleHtml + ' ' + contentHtml)
+        alert(titleHtml + ' ' + contentHtml)
     }
 
     setFocusHandlers() {
         this.richtext.setTitleFocusHandler(() => {
-            //alert('title focus');
+            alert('title focus');
         });
         this.richtext.setContentFocusHandler(() => {
-            //alert('content focus');
+            alert('content focus');
         });
     }
 }
