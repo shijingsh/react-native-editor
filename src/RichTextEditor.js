@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import WebViewBridge from 'react-native-webview-bridge';
+import WebViewBridge from 'react-native-webview-bridge-updated';
 import {InjectedMessageHandler} from './WebviewMessageHandler';
 import {actions, messages,html} from './const';
 import {Modal, View, Text, StyleSheet, TextInput, TouchableOpacity, Platform, PixelRatio, Keyboard, Dimensions} from 'react-native';
