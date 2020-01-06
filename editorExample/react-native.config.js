@@ -5,7 +5,7 @@ module.exports = {
                 android: null, // disable Android platform, other platforms will still autolink if provided
             },
         },
-        'react-native-webview-bridge': {
+        'react-native-webview-bridge-updated': {
             platforms: {
                 android: null, // disable Android platform, other platforms will still autolink if provided
             },

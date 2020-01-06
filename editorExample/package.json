@@ -13,6 +13,7 @@
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-editor": "git+https://github.com/shijingsh/react-native-editor.git",
+    "react-native-webview-bridge-updated": "git+https://github.com/shijingsh/react-native-webview-bridge-updated.git",
     "react-native-keyboard-spacer": "^0.4.1",
     "react-native-webview": "^8.0.2"
   },
