@@ -1719,6 +1719,176 @@ export const html = `
 \t\t\t\tzss_editor.platform = platform;
 \t\t\t}
 
+\t\t\twindow.onWebViewBridgeMessage = function (message) {
+
+\t\t\t\tconst action = JSON.parse(message);
+
+\t\t\t\tswitch(action.type) {
+\t\t\t\t\tcase '${actions.enableOnChange}':
+\t\t\t\t\t\tzss_editor.enableOnChange();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setTitleHtml}':
+\t\t\t\t\t\tzss_editor.setTitleHTML(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.toggleTitle}':
+\t\t\t\t\t\tzss_editor.toggleTitle(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.hideTitle}':
+\t\t\t\t\t\tzss_editor.hideTitle(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.showTitle}':
+\t\t\t\t\t\tzss_editor.showTitle(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setContentHtml}':
+\t\t\t\t\t\tzss_editor.setContentHTML(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.blurTitleEditor}':
+\t\t\t\t\t\tzss_editor.blurTitleEditor();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.blurContentEditor}':
+\t\t\t\t\t\tzss_editor.blurContentEditor();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setBold}':
+\t\t\t\t\t\tzss_editor.setBold();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setItalic}':
+\t\t\t\t\t\tzss_editor.setItalic();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setUnderline}':
+\t\t\t\t\t\tzss_editor.setUnderline();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.heading1}':
+\t\t\t\t\t\tzss_editor.setHeading('h1');
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.heading2}':
+\t\t\t\t\t\tzss_editor.setHeading('h2');
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.heading3}':
+\t\t\t\t\t\tzss_editor.setHeading('h3');
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.heading4}':
+\t\t\t\t\t\tzss_editor.setHeading('h4');
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.heading5}':
+\t\t\t\t\t\tzss_editor.setHeading('h5');
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.heading6}':
+\t\t\t\t\t\tzss_editor.setHeading('h6');
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setParagraph}':
+\t\t\t\t\t\tzss_editor.setParagraph();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.removeFormat}':
+\t\t\t\t\t\tzss_editor.removeFormating();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.alignLeft}':
+\t\t\t\t\t\tzss_editor.setJustifyLeft();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.alignCenter}':
+\t\t\t\t\t\tzss_editor.setJustifyCenter();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.alignRight}':
+\t\t\t\t\t\tzss_editor.setJustifyRight();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.alignFull}':
+\t\t\t\t\t\tzss_editor.setJustifyFull();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.insertBulletsList}':
+\t\t\t\t\t\tzss_editor.setUnorderedList();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.insertOrderedList}':
+\t\t\t\t\t\tzss_editor.setOrderedList();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.insertLink}':
+\t\t\t\t\t\tzss_editor.insertLink(action.data.url, action.data.title);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.updateLink}':
+\t\t\t\t\t\tzss_editor.updateLink(action.data.url, action.data.title);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.insertImage}':
+\t\t\t\t\t\tzss_editor.insertImage(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setSubscript}':
+\t\t\t\t\t\tzss_editor.setSubscript();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setSuperscript}':
+\t\t\t\t\t\tzss_editor.setSuperscript();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setStrikethrough}':
+\t\t\t\t\t\tzss_editor.setStrikeThrough();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setHR}':
+\t\t\t\t\t\tzss_editor.setHorizontalRule();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setIndent}':
+\t\t\t\t\t\tzss_editor.setIndent();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setOutdent}':
+\t\t\t\t\t\tzss_editor.setOutdent();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setTitlePlaceholder}':
+\t\t\t\t\t\tzss_editor.setTitlePlaceholder(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setContentPlaceholder}':
+\t\t\t\t\t\tzss_editor.setContentPlaceholder(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.getTitleHtml}':
+\t\t\t\t\t\tvar html = zss_editor.getTitleHTML();
+\t\t\t\t\t\tWebViewBridge.send(JSON.stringify({type: '${messages.TITLE_HTML_RESPONSE}', data: html}));
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.getTitleText}':
+\t\t\t\t\t\tvar html = zss_editor.getTitleText();
+\t\t\t\t\t\tWebViewBridge.send(JSON.stringify({type: '${messages.TITLE_TEXT_RESPONSE}', data: html}));
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.getContentHtml}':
+\t\t\t\t\t\tvar html = zss_editor.getContentHTML();
+\t\t\t\t\t\tWebViewBridge.send(JSON.stringify({type: '${messages.CONTENT_HTML_RESPONSE}', data: html}));
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setTitleFocusHandler}':
+\t\t\t\t\t\tzss_editor.setTitleFocusHandler();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setContentFocusHandler}':
+\t\t\t\t\t\tzss_editor.setContentFocusHandler();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.getSelectedText}':
+\t\t\t\t\t\tvar selectedText = getSelection().toString();
+\t\t\t\t\t\tWebViewBridge.send(JSON.stringify({type: '${messages.SELECTED_TEXT_RESPONSE}', data: selectedText}));
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.focusContent}':
+\t\t\t\t\t\tzss_editor.focusContent();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.focusTitle}':
+\t\t\t\t\t\tzss_editor.focusTitle();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.prepareInsert}':
+\t\t\t\t\t\tzss_editor.prepareInsert();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.restoreSelection}':
+\t\t\t\t\t\tzss_editor.restorerange();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setCustomCSS}':
+\t\t\t\t\t\tzss_editor.setCustomCSS(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setTextColor}':
+\t\t\t\t\t\tzss_editor.setTextColor(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setBackgroundColor}':
+\t\t\t\t\t\tzss_editor.setBackgroundColor(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.init}':
+\t\t\t\t\t\tzss_editor.init();
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setEditorHeight}':
+\t\t\t\t\t\tzss_editor.setEditorHeight(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setFooterHeight}':
+\t\t\t\t\t\tzss_editor.setFooterHeight(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.setPlatform}':
+\t\t\t\t\t\tzss_editor.setPlatform(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t}
+\t\t\t};
 \t\t\t//end
 \t\t</script>
 
@@ -1827,5 +1997,6 @@ export const html = `
 \t\t<div id="zss_editor_footer"></div>
 \t</body>
 </html>
+
 
           `
