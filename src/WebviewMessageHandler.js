@@ -2,7 +2,7 @@ import {actions, messages} from './const';
 
 export const InjectedMessageHandler = `
   if (WebViewBridge) {
-    WebViewBridge.onMessage = function (message) {
+   window.onWebViewBridgeMessage = function (message) {
 
       const action = JSON.parse(message);
 

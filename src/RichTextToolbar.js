@@ -126,7 +126,6 @@ export default class RichTextToolbar extends Component {
           <FlatList
               data={list}
               keyExtractor={(item, index) => item.id}
-              renderItem={(row) => this._renderAction(row.action, row.selected)}
               renderItem={(obj) => {
                 return this._renderAction(obj)
               }}
