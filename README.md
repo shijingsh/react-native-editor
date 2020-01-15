@@ -2,22 +2,22 @@
 
 for update https://github.com/wix/react-native-zss-rich-text-editor
 
+## Result
+
+<p align="left">
+<img width=200 title="editor" src="https://github.com/shijingsh/react-native-editor/blob/master/readme/editor.png">
+<img width=200 title="toolbar_selected" src="https://github.com/shijingsh/react-native-editor/blob/master/readme/toolbar.png">
+<img width=200 title="toolbar_selected" src="https://github.com/shijingsh/react-native-editor/blob/master/readme/toolbar_selected.png">
+
+</p>
+
 ## Installation
 
 ```
 npm i --save react-native-editor
 ```
 
-On Android, add the following to the end of your `android/app/build.gradle`
-
-```groovy
-project.afterEvaluate {
-    apply from: '../../node_modules/react-native-editor/htmlCopy.gradle';
-    copyEditorHtmlToAppAssets(file('../../node_modules/react-native-editor'))
-}
-```
-
-Also, follow instructions [here](https://github.com/alinz/react-native-webview-bridge) to add the native `react-native-webview-bridge-updated` dependency.
+Also, follow instructions [here](https://github.com/shijingsh/react-native-webview-bridge-updated) to add the native `react-native-webview-bridge-updated` dependency.
 
 
 ## Usage
@@ -133,8 +133,6 @@ This method registers a function that will get called whenver the cursor positio
 />
 ```
 
-![RichTextEditor](readme/editor.png)
-
 ## `RichTextToolbar`
 
 This is a Component that provides a toolbar for easily controlling an editor. It is designed to be used together with a `RichTextEditor` component.
@@ -188,10 +186,6 @@ Other props supported by the `RichTextToolbar` component are:
 	getEditor={() => this.richtext}
 />
 ```
-
-![RichTextEditor](readme/toolbar.png)
-
-![RichTextEditor](readme/toolbar_selected.png)
 
 
 ## `actions`
