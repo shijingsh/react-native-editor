@@ -1367,6 +1367,11 @@
 				editor.html(html);
 			}
 
+			function appendHTML(editorId, html) {
+				var editor = $('#' + editorId);
+				editor.append(html);
+			}
+
 			zss_editor.setTitleHTML = function(html) {
 				setHTML('zss_editor_title', html);
 			}
@@ -1397,6 +1402,10 @@
 
 			zss_editor.setContentHTML = function(html) {
 				setHTML('zss_editor_content', html);
+			}
+
+			zss_editor.appendContentHTML = function(html) {
+				appendHTML('zss_editor_content', html);
 			}
 
 			zss_editor.insertHTML = function(html) {
@@ -1572,7 +1581,15 @@
 			}
 
 			zss_editor.focusContent = function() {
-				$('#zss_editor_content').focus();
+				var editor = $('#zss_editor_content');
+				editor.focus();
+				var range = document.createRange();
+				range.selectNodeContents(editor.get(0));
+				range.collapse(false);
+				var selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+				editor.focus();
 			}
 
 			zss_editor.focusTitle = function() {
@@ -1583,7 +1600,10 @@
 
 				// the following was taken from http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
 				// and ensures we move the cursor to the end of the editor
+				alert(editor.get(0));
 				var editor = $('#' + editorId);
+				editor.focus();
+				alert(editor.get(0));
 				var range = document.createRange();
 				range.selectNodeContents(editor.get(0));
 				range.collapse(false);
@@ -1646,7 +1666,6 @@
 			window.onWebViewBridgeMessage = function (message) {
 
 				const action = JSON.parse(message);
-
 				switch(action.type) {
 					case '${actions.enableOnChange}':
 						zss_editor.enableOnChange();
@@ -1665,6 +1684,9 @@
 						break;
 					case '${actions.setContentHtml}':
 						zss_editor.setContentHTML(action.data);
+						break;
+					case '${actions.appendContentHtml}':
+						zss_editor.appendContentHTML(action.data);
 						break;
 					case '${actions.blurTitleEditor}':
 						zss_editor.blurTitleEditor();

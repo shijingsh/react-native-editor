@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
+  Button,
   Platform
 } from 'react-native';
 import {RichTextEditor, RichTextToolbar} from 'react-native-editor';
@@ -16,20 +18,52 @@ export default class RichTextExample extends Component {
     this.setFocusHandlers = this.setFocusHandlers.bind(this);
   }
 
+  onPressInsert=()=>{
+    this.richtext.setContentHTML("<p>insert by setContentHTML</p>");
+  }
+
+  onPressAppendInsert=()=>{
+    this.richtext.appendContentHTML("<p>append by appendContentHTML</p>");
+  }
+
+  onPressGotFocus=()=>{
+      this.richtext.focusContent();
+  }
+
+  onEditorInitialized() {
+
+  }
+
   render() {
     return (
         <View style={styles.container}>
-          <RichTextEditor
-              ref={(r)=>this.richtext = r}
-              style={styles.richText}
-              initialTitleHTML={'Title!!'}
-              initialContentHTML={'Hello <b>World</b> <p>this is a new paragraph</p> <p>this is another new paragraph</p>'}
-              editorInitializedCallback={() => this.onEditorInitialized()}
-          />
-          <RichTextToolbar
-              getEditor={() => this.richtext}
-          />
-          {Platform.OS === 'ios' && <KeyboardSpacer/>}
+          <View style={{flexDirection: 'row',height:50,        alignItems: 'center',
+            justifyContent: 'center',backgroundColor:'#847b66'}}>
+            <TouchableOpacity style={{marginLeft:20,padding:5}} onPress={this.onPressInsert}>
+              <Text>insert HTML</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:20,padding:5}} onPress={this.onPressAppendInsert}>
+              <Text>append HTML</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:20,padding:5}} onPress={this.onPressGotFocus}>
+              <Text>got Focus</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.containerRichText}>
+            <RichTextEditor
+                ref={(r)=>this.richtext = r}
+                style={styles.richText}
+                initialTitleHTML={'Title!!'}
+                hiddenTitle = {true}
+                initialContentHTML={'Hello <b>World</b> <p>this is a new paragraph</p> <p>this is another new paragraph</p>'}
+                editorInitializedCallback={() => this.onEditorInitialized()}
+            />
+            <RichTextToolbar
+                getEditor={() => this.richtext}
+            />
+            {Platform.OS === 'ios' && <KeyboardSpacer/>}
+          </View>
+
         </View>
     );
   }
@@ -60,7 +94,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    paddingTop: 40
+   // paddingTop: 40
+  },
+  containerRichText: {
+    flex: 1,
+    flexDirection: 'column'
   },
   richText: {
     alignItems:'center',

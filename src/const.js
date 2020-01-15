@@ -2,6 +2,7 @@ export const actions = {
   enableOnChange: 'ENABLE_ON_CHANGE',
   setTitleHtml: 'SET_TITLE_HTML',
   setContentHtml: 'SET_CONTENT_HTML',
+  appendContentHtml: 'APPEND_CONTENT_HTML',
   getTitleHtml: 'GET_TITLE_HTML',
   getTitleText: 'GET_TITLE_TEXT',
   toggleTitle: 'TOGGLE_TITLE',
@@ -1443,6 +1444,11 @@ export const html = `
 \t\t\t\teditor.html(html);
 \t\t\t}
 
+\t\t\tfunction appendHTML(editorId, html) {
+\t\t\t\tvar editor = $('#' + editorId);
+\t\t\t\teditor.append(html);
+\t\t\t}
+
 \t\t\tzss_editor.setTitleHTML = function(html) {
 \t\t\t\tsetHTML('zss_editor_title', html);
 \t\t\t}
@@ -1473,6 +1479,10 @@ export const html = `
 
 \t\t\tzss_editor.setContentHTML = function(html) {
 \t\t\t\tsetHTML('zss_editor_content', html);
+\t\t\t}
+
+\t\t\tzss_editor.appendContentHTML = function(html) {
+\t\t\t\tappendHTML('zss_editor_content', html);
 \t\t\t}
 
 \t\t\tzss_editor.insertHTML = function(html) {
@@ -1648,7 +1658,15 @@ export const html = `
 \t\t\t}
 
 \t\t\tzss_editor.focusContent = function() {
-\t\t\t\t$('#zss_editor_content').focus();
+\t\t\t\tvar editor = $('#zss_editor_content');
+\t\t\t\teditor.focus();
+\t\t\t\tvar range = document.createRange();
+\t\t\t\trange.selectNodeContents(editor.get(0));
+\t\t\t\trange.collapse(false);
+\t\t\t\tvar selection = window.getSelection();
+\t\t\t\tselection.removeAllRanges();
+\t\t\t\tselection.addRange(range);
+\t\t\t\teditor.focus();
 \t\t\t}
 
 \t\t\tzss_editor.focusTitle = function() {
@@ -1659,7 +1677,10 @@ export const html = `
 
 \t\t\t\t// the following was taken from http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
 \t\t\t\t// and ensures we move the cursor to the end of the editor
+\t\t\t\talert(editor.get(0));
 \t\t\t\tvar editor = $('#' + editorId);
+\t\t\t\teditor.focus();
+\t\t\t\talert(editor.get(0));
 \t\t\t\tvar range = document.createRange();
 \t\t\t\trange.selectNodeContents(editor.get(0));
 \t\t\t\trange.collapse(false);
@@ -1722,7 +1743,6 @@ export const html = `
 \t\t\twindow.onWebViewBridgeMessage = function (message) {
 
 \t\t\t\tconst action = JSON.parse(message);
-
 \t\t\t\tswitch(action.type) {
 \t\t\t\t\tcase '${actions.enableOnChange}':
 \t\t\t\t\t\tzss_editor.enableOnChange();
@@ -1741,6 +1761,9 @@ export const html = `
 \t\t\t\t\t\tbreak;
 \t\t\t\t\tcase '${actions.setContentHtml}':
 \t\t\t\t\t\tzss_editor.setContentHTML(action.data);
+\t\t\t\t\t\tbreak;
+\t\t\t\t\tcase '${actions.appendContentHtml}':
+\t\t\t\t\t\tzss_editor.appendContentHTML(action.data);
 \t\t\t\t\t\tbreak;
 \t\t\t\t\tcase '${actions.blurTitleEditor}':
 \t\t\t\t\t\tzss_editor.blurTitleEditor();
@@ -1997,6 +2020,5 @@ export const html = `
 \t\t<div id="zss_editor_footer"></div>
 \t</body>
 </html>
-
 
           `
