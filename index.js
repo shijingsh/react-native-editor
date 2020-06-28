@@ -1,7 +1,6 @@
-import RichTextEditor from './src/RichTextEditor';
-import RichTextToolbar from './src/RichTextToolbar';
+import RichEditor from './src/RichEditor';
+import RichToolbar from './src/RichToolbar';
 import {actions} from './src/const';
+import {createHTML} from './src/editor';
 
-module.exports = {
-  RichTextEditor, RichTextToolbar, actions
-}
+export {RichEditor, RichToolbar, actions, createHTML};
