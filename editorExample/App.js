@@ -14,9 +14,7 @@ const initHTML = `<br/>
 </br></br>
 `;
 
-
 export default class RichTextExample extends Component {
-    richText = React.createRef();
 
     constructor(props) {
         super(props);
@@ -24,11 +22,6 @@ export default class RichTextExample extends Component {
         const theme = props.theme || Appearance.getColorScheme();
         const contentStyle = that.createContentStyle(theme);
         that.state = {theme: theme, contentStyle};
-        //that.onHome = ::that.onHome;
-        //that.onPressGotValue = ::that.onPressGotValue;
-        //that.onTheme = ::that.onTheme;
-        //that.onPressAddImage = ::that.onPressAddImage;
-        //that.themeChange = ::that.themeChange;
     }
 
     onPressInsert = () => {
@@ -36,21 +29,21 @@ export default class RichTextExample extends Component {
     }
 
     onPressAppendInsert = () => {
-        //this.richText.appendContentHTML("<p>append by appendContentHTML</p>");
+        this.richText.appendContentHTML("<p>append by appendContentHTML</p>");
     }
 
-    onPressGotFocus() {
+    onPressGotFocus = () => {
         this.richText.focusContentEditor();
     }
 
-    onPressAddImage() {
+    onPressAddImage = () => {
         // insert URL
-        this.richText.current?.insertImage(
+        this.richText.insertImage(
             'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1024px-React-icon.svg.png',
         );
         // insert base64
         // this.richText.current?.insertImage(`data:${image.mime};base64,${image.data}`);
-        this.richText.current?.blurContentEditor();
+        this.richText.blurContentEditor();
     }
 
     createContentStyle (theme){
@@ -65,7 +58,7 @@ export default class RichTextExample extends Component {
 
     async onPressGotValue() {
         // Get the data here and call the interface to save the data
-        let html = await this.richText.current?.getContentHtml();
+        let html = await this.richText.getContentHtml();
         // console.log(html);
         alert(html);
     }
@@ -87,7 +80,7 @@ export default class RichTextExample extends Component {
                     <TouchableOpacity style={{marginLeft: 10, padding: 5}} onPress={this.onPressGotFocus}>
                         <Text>gotFocus</Text>
                     </TouchableOpacity>
-                  <TouchableOpacity style={{marginLeft: 10, padding: 5}} onPress={this.onPressGotValue}>
+                  <TouchableOpacity style={{marginLeft: 10, padding: 5}} onPress={this.onPressGotValue.bind(this)}>
                     <Text>gotValue</Text>
                   </TouchableOpacity>
                 </View>
@@ -95,20 +88,22 @@ export default class RichTextExample extends Component {
                     <RichEditor
                         editorStyle={contentStyle}
                         containerStyle={themeBg}
-                        ref={that.richText}
+                        ref={(r) => that.richText = r}
                         style={[styles.rich, themeBg]}
                         placeholder={'please input content'}
                         initialContentHTML={initHTML}
                     />
                 </ScrollView>
-                <RichToolbar
-                    style={[styles.richBar, themeBg]}
-                    editor={that.richText}
-                    iconTint={color}
-                    selectedIconTint={'#2095F2'}
-                    selectedButtonStyle={{backgroundColor: 'transparent'}}
-                    onPressAddImage={that.onPressAddImage}
-                />
+                <KeyboardAvoidingView behavior={'padding'}>
+                    <RichToolbar
+                        style={[styles.richBar, themeBg]}
+                        getEditor={() => that.richText}
+                        iconTint={color}
+                        selectedIconTint={'#2095F2'}
+                        selectedButtonStyle={{backgroundColor: 'transparent'}}
+                        onPressAddImage={that.onPressAddImage}
+                    />
+                </KeyboardAvoidingView>
 
             </SafeAreaView>
         );

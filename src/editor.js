@@ -157,6 +157,9 @@ function createHTML(options = {}) {
                 setHtml: function(html) {
                     editor.content.innerHTML = html;
                 },
+                appendHtml: function(html) {
+                    editor.content.innerHTML = editor.content.innerHTML +'<br /' + html;
+                },
                 getHtml: function() {
                     return editor.content.innerHTML;
                 },
