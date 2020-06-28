@@ -1,7 +1,10 @@
 # React Native Editor
-
 for update https://github.com/wix/react-native-zss-rich-text-editor
 
+from v2.0.0
+Development based on https://github.com/stulip/react-native-pell-rich-editor
+
+thanks for you starred react-native-pell-rich-editor
 ## Result
 
 <p align="left">
@@ -16,9 +19,6 @@ for update https://github.com/wix/react-native-zss-rich-text-editor
 ```
 npm i --save react-native-editor
 ```
-
-Also, follow instructions [here](https://github.com/shijingsh/react-native-webview-bridge-updated) to add the native `react-native-webview-bridge-updated` dependency.
-
 
 ## Usage
 
