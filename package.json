@@ -4,8 +4,14 @@
     "type": "git",
     "url": "https://github.com/shijingsh/react-native-editor"
   },
+  "keywords": [
+    "react-native",
+    "editor",
+    "rich text editor",
+    "rich text"
+  ],
   "version": "2.0.0",
-  "description": "React Native Wrapper for ZSSRichTextEditor",
+  "description": "rich text editor for react-native",
   "main": "index.js",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
