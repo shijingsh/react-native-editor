@@ -2,9 +2,9 @@
 for update https://github.com/wix/react-native-zss-rich-text-editor
 
 from v2.0.0
-Development based on https://github.com/stulip/react-native-pell-rich-editor
+Development based on https://github.com/wxik/react-native-rich-editor v1.3.0
 
-thanks for you starred react-native-pell-rich-editor
+thanks for you starred react-native-rich-editor
 ## Result
 
 <p align="left">

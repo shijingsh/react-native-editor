@@ -1,7 +1,12 @@
-//console.log = function (){ postAction({type: 'LOG', data: Array.prototype.slice.call(arguments)});};
-
 function createHTML(options = {}) {
-    const {backgroundColor = '#FFF', color = '#000033', placeholderColor = '#a9a9a9'} = options;
+    const {
+        backgroundColor = '#FFF',
+        color = '#000033',
+        placeholderColor = '#a9a9a9',
+        contentCSSText = '',
+        cssText = '',
+    } = options;
+    //ERROR: HTML height not 100%;
     return `
 <!DOCTYPE html>
 <html>
@@ -12,30 +17,29 @@ function createHTML(options = {}) {
         html, body { margin: 0; padding: 0;font-family: Arial, Helvetica, sans-serif; font-size:1em;}
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;height: 100%;background-color: ${backgroundColor};}
         img {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}
+        video {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}
         .content {font-family: Arial, Helvetica, sans-serif;color: ${color}; width: 100%;height: 100%;-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
-        .pell { height: 100%;}
-        .pell-content { outline: 0; overflow-y: auto;padding: 10px;height: 100%;}
+        .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 10px;height: 100%;${contentCSSText}}
         table {width: 100% !important;}
         table td {width: inherit;}
         table span { font-size: 12px !important; }
+        ${cssText}
     </style>
     <style>
-        [placeholder]:empty:before {
-            content: attr(placeholder);
-            color: ${placeholderColor};
-        }
-        [placeholder]:empty:focus:before {
-            content: attr(placeholder);
-            color: ${placeholderColor};
-        }
+        [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor};}
+        [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};}
     </style>
 </head>
 <body>
 <div class="content"><div id="editor" class="pell"></div></div>
 <script>
+    var placeholderColor = '${placeholderColor}';
+    var __DEV__ = !!${window.__DEV__};
     (function (exports) {
+        var body = document.body, docEle = document.documentElement;
         var defaultParagraphSeparatorString = 'defaultParagraphSeparator';
         var formatBlock = 'formatBlock';
+        var editor = null, o_height = 0;
         var addEventListener = function addEventListener(parent, type, listener) {
             return parent.addEventListener(type, listener);
         };
@@ -58,141 +62,134 @@ function createHTML(options = {}) {
         };
 
         var postAction = function(data){
-            window.ReactNativeWebView.postMessage(JSON.stringify(data));
+            editor.content.contentEditable === 'true' && exports.window.postMessage(JSON.stringify(data));
         };
 
-        var editor = null, o_height = 0;
+        console.log = function (){
+            __DEV__ && postAction({type: 'LOG', data: Array.prototype.slice.call(arguments)});
+        }
+
+        var anchorNode = void 0, focusNode = void 0, anchorOffset = 0, focusOffset = 0;
+        var saveSelection = function(){
+            var sel = window.getSelection();
+            anchorNode = sel.anchorNode;
+            anchorOffset = sel.anchorOffset;
+            focusNode = sel.focusNode;
+            focusOffset = sel.focusOffset;
+        }
+
+        var focusCurrent = function (){
+            editor.content.focus();
+            try {
+                var selection = window.getSelection();
+                if (anchorNode){
+                    var range = document.createRange();
+                    range.setStart(anchorNode, anchorOffset);
+                    range.setEnd(focusNode, focusOffset);
+                    focusOffset === anchorOffset && range.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                } else {
+                    selection.selectAllChildren(editor.content);
+                    selection.collapseToEnd();
+                }
+            } catch(e){
+                console.log(e)
+            }
+        }
 
         var Actions = {
-            bold: {
-                state: function() {
-                    return queryCommandState('bold');
-                },
-                result: function() {
-                    return exec('bold');
-                }
-            },
-            italic: {
-                state: function() {
-                    return queryCommandState('italic');
-                },
-                result: function() {
-                    return exec('italic');
-                }
-            },
-            underline: {
-                state: function() {
-                    return queryCommandState('underline');
-                },
-                result: function() {
-                    return exec('underline');
-                }
-            },
-            strikethrough: {
-                state: function() {
-                    return queryCommandState('strikeThrough');
-                },
-                result: function() {
-                    return exec('strikeThrough');
-                }
-            },
-            heading1: {
-                result: function() {
-                    return exec(formatBlock, '<h1>');
-                }
-            },
-            heading2: {
-                result: function() {
-                    return exec(formatBlock, '<h2>');
-                }
-            },
-            paragraph: {
-                result: function() {
-                    return exec(formatBlock, '<p>');
-                }
-            },
-            quote: {
-                result: function() {
-                    return exec(formatBlock, '<blockquote>');
-                }
-            },
-            orderedList: {
-                state: function() {
-                    return queryCommandState('insertOrderedList');
-                },
-                result: function() {
-                    return exec('insertOrderedList');
-                }
-            },
-            unorderedList: {
-                state: function() {
-                    return queryCommandState('insertUnorderedList');
-                },
-                result: function() {
-                    return exec('insertUnorderedList');
-                }
-            },
-            code: {
-                result: function() {
-                    return exec(formatBlock, '<pre>');
-                }
-            },
-            line: {
-                result: function() {
-                    return exec('insertHorizontalRule');
-                }
-            },
+            bold: { state: function() { return queryCommandState('bold'); }, result: function() { return exec('bold'); }},
+            italic: { state: function() { return queryCommandState('italic'); }, result: function() { return exec('italic'); }},
+            underline: { state: function() { return queryCommandState('underline'); }, result: function() { return exec('underline'); }},
+            strikeThrough: { state: function() { return queryCommandState('strikeThrough'); }, result: function() { return exec('strikeThrough'); }},
+            heading1: { result: function() { return exec(formatBlock, '<h1>'); }},
+            heading2: { result: function() { return exec(formatBlock, '<h2>'); }},
+            heading3: { result: function() { return exec(formatBlock, '<h3>'); }},
+            heading4: { result: function() { return exec(formatBlock, '<h4>'); }},
+            heading5: { result: function() { return exec(formatBlock, '<h5>'); }},
+            heading6: { result: function() { return exec(formatBlock, '<h6>'); }},
+            paragraph: { result: function() { return exec(formatBlock, '<p>'); }},
+            quote: { result: function() { return exec(formatBlock, '<blockquote>'); }},
+            orderedList: { state: function() { return queryCommandState('insertOrderedList'); }, result: function() { return exec('insertOrderedList'); }},
+            unorderedList: { state: function() { return queryCommandState('insertUnorderedList'); },result: function() { return exec('insertUnorderedList'); }},
+            code: { result: function() { return exec(formatBlock, '<pre>'); }},
+            line: { result: function() { return exec('insertHorizontalRule'); }},
             link: {
-                result: function() {
-                    var url = window.prompt('Enter the link URL');
-                    if (url) exec('createLink', url);
+                result: function(data) {
+                    data = data || {};
+                    var title = data.title;
+                    // title = title || window.prompt('Enter the link title');
+                    var url = data.url || window.prompt('Enter the link URL');
+                    if (url){
+                        exec('insertHTML', "<a href='"+ url +"'>"+(title || url)+"</a>");
+                    }
                 }
             },
             image: {
                 result: function(url) {
-                    if (url) { exec('insertHTML', "<br><div><img src='"+ url +"'/></div><br>");}
+                    if (url){
+                        exec('insertHTML', "<br><div><img src='"+ url +"'/></div><br>");
+                        Actions.UPDATE_HEIGHT();
+                    }
+                }
+            },
+            html: {
+                result: function (html){
+                    if (html){
+                        exec('insertHTML', html);
+                        Actions.UPDATE_HEIGHT();
+                    }
+                }
+            },
+            text: { result: function (text){ text && exec('insertText', text); }},
+            video: {
+                result: function(url) {
+                    if (url) {
+                        var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
+                        exec('insertHTML', "<br><div><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>");
+                        Actions.UPDATE_HEIGHT();
+                    }
                 }
             },
             content: {
-                setHtml: function(html) {
-                    editor.content.innerHTML = html;
-                },
+                setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis},
+                setHtml: function(html) { editor.content.innerHTML = html; },
                 appendHtml: function(html) {
                     editor.content.innerHTML = editor.content.innerHTML +'<br /' + html;
                 },
-                getHtml: function() {
-                    return editor.content.innerHTML;
-                },
-                blur: function() {
-                    editor.content.blur();
-                },
-                focus: function() {
-                    editor.content.focus();
-                },
-                postHtml: function (){
-                    postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML});
-                },
-                setPlaceholder: function(placeholder){
-                    editor.content.setAttribute("placeholder", placeholder)
-                },
+                getHtml: function() { return editor.content.innerHTML; },
+                blur: function() { editor.content.blur(); },
+                focus: function() { focusCurrent(); },
+                postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
+                setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
+
                 setContentStyle: function(styles) {
                     styles = styles || {};
-                    var backgroundColor = styles.backgroundColor, color = styles.color, pColor = styles.placeholderColor;
-                    if (backgroundColor) document.body.style.backgroundColor = backgroundColor;
-                    if (color) editor.content.style.color = color;
-                    if (pColor){
+                    var bgColor = styles.backgroundColor, color = styles.color, pColor = styles.placeholderColor;
+                    if (bgColor && bgColor !== body.style.backgroundColor) body.style.backgroundColor = bgColor;
+                    if (color && color !== editor.content.style.color) editor.content.style.color = color;
+                    if (pColor && pColor !== placeholderColor){
                         var rule1="[placeholder]:empty:before {content:attr(placeholder);color:"+pColor+";}";
                         var rule2="[placeholder]:empty:focus:before{content:attr(placeholder);color:"+pColor+";}";
                         try {
                             document.styleSheets[1].deleteRule(0);document.styleSheets[1].deleteRule(0);
                             document.styleSheets[1].insertRule(rule1); document.styleSheets[1].insertRule(rule2);
-                        } catch (e){ }
+                            placeholderColor = pColor;
+                        } catch (e){
+                            console.log("set placeholderColor error!")
+                        }
                     }
                 }
             },
 
+            init: function (){
+                setInterval(Actions.UPDATE_HEIGHT, 150);
+                Actions.UPDATE_HEIGHT();
+            },
+
             UPDATE_HEIGHT: function() {
-                var height = Math.max(document.documentElement.clientHeight, document.documentElement.scrollHeight, document.body.clientHeight, document.body.scrollHeight);
+                var height = Math.max(docEle.scrollHeight, body.scrollHeight);
                 if (o_height !== height){
                     postAction({type: 'OFFSET_HEIGHT', data: o_height = height});
                 }
@@ -200,11 +197,9 @@ function createHTML(options = {}) {
         };
 
         var init = function init(settings) {
-
             var defaultParagraphSeparator = settings[defaultParagraphSeparatorString] || 'div';
-
-
             var content = settings.element.content = createElement('div');
+            content.id = 'content';
             content.contentEditable = true;
             content.spellcheck = false;
             content.autocapitalize = 'off';
@@ -212,10 +207,10 @@ function createHTML(options = {}) {
             content.autocomplete = 'off';
             content.className = "pell-content";
             content.oninput = function (_ref) {
-                var firstChild = _ref.target.firstChild;
-
-                if (firstChild && firstChild.nodeType === 3) exec(formatBlock, '<' + defaultParagraphSeparator + '>');else if (content.innerHTML === '<br>') content.innerHTML = '';
+                // var firstChild = _ref.target.firstChild;
+                // if (firstChild && firstChild.nodeType === 3) exec(formatBlock, '<' + defaultParagraphSeparator + '>');else if (content.innerHTML === '<br>') content.innerHTML = '';
                 settings.onChange(content.innerHTML);
+                saveSelection();
             };
             content.onkeydown = function (event) {
                 if (event.key === 'Enter' && queryCommandValue(formatBlock) === 'blockquote') {
@@ -236,21 +231,29 @@ function createHTML(options = {}) {
                 }
             }
 
-            var handler = function handler() {
-
+            var handler = function () {
                 var activeTools = [];
                 for(var k in actionsHandler){
                     if ( Actions[k].state() ){
                         activeTools.push(k);
                     }
                 }
-                console.log('change', activeTools);
                 postAction({type: 'SELECTION_CHANGE', data: activeTools});
                 return true;
             };
-            addEventListener(content, 'touchend', function(){
-                setTimeout(handler, 100);
-            });
+
+            var _handleTouchDT = null;
+            var handleTouch = function (event){
+                event.stopPropagation();
+                _handleTouchDT && clearTimeout(_handleTouchDT);
+                _handleTouchDT = setTimeout(function (){
+                    handler();
+                    saveSelection();
+                }, 50);
+            }
+            addEventListener(content, 'touchcancel', handleTouch);
+            addEventListener(content, 'mouseup', handleTouch);
+            addEventListener(content, 'touchend', handleTouch);
             addEventListener(content, 'blur', function () {
                 postAction({type: 'SELECTION_CHANGE', data: []});
             });
@@ -262,21 +265,20 @@ function createHTML(options = {}) {
                 var msgData = JSON.parse(event.data), action = Actions[msgData.type];
                 if (action ){
                     if ( action[msgData.name]){
+                        var flag = msgData.name === 'result';
+                        flag && focusCurrent();
                         action[msgData.name](msgData.data);
-                        if (msgData.name === 'result'){
-                            content.focus();
-                            handler();
-                        }
+                        flag && handler();
                     } else {
                         action(msgData.data);
                     }
                 }
             };
-
             document.addEventListener("message", message , false);
             window.addEventListener("message", message , false);
-            document.addEventListener('touchend', function () {
-                content.focus();
+            document.addEventListener('mouseup', function (event) {
+                event.preventDefault();
+                Actions.content.focus();
             });
             return settings.element;
         };
@@ -284,8 +286,15 @@ function createHTML(options = {}) {
         editor = init({
             element: document.getElementById('editor'),
             defaultParagraphSeparator: 'div',
+            onChange: function (){
+                setTimeout(function(){
+                    postAction({type: 'CONTENT_CHANGE', data: Actions.content.getHtml()});
+                }, 10);
+            }
         })
-    })(window);
+    })({
+        window: window.ReactNativeWebView || window.parent,
+    });
 </script>
 </body>
 </html>

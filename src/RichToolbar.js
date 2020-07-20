@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {FlatList, Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {actions} from './const';
 
-const defaultActions = [
+export const defaultActions = [
     actions.insertImage,
     actions.setBold,
     actions.setItalic,
@@ -28,16 +28,21 @@ export default class RichToolbar extends Component {
     //   editor?: PropTypes.object,
     //   actions: PropTypes.array,
     //   onPressAddImage: PropTypes.func,
+    //   onInsertLink: PropTypes.func,
     //   selectedButtonStyle: PropTypes.object,
     //   iconTint: PropTypes.any,
     //   selectedIconTint: PropTypes.any,
     //   unselectedButtonStyle: PropTypes.object,
+    //   disabledButtonStyle: PropTypes.object,
+    //   disabledIconTint: PropTypes.any,
     //   renderAction: PropTypes.func,
     //   iconMap: PropTypes.object,
+    //   disabled: PropTypes.bool,
     // };
 
     static defaultProps = {
         actions: defaultActions,
+        disabled: false,
     };
 
     constructor(props) {
@@ -91,11 +96,15 @@ export default class RichToolbar extends Component {
     }
 
     _getButtonSelectedStyle() {
-        return this.props.selectedButtonStyle ? this.props.selectedButtonStyle : styles.defaultSelectedButton;
+        return this.props.selectedButtonStyle && this.props.selectedButtonStyle;
     }
 
     _getButtonUnselectedStyle() {
-        return this.props.unselectedButtonStyle ? this.props.unselectedButtonStyle : styles.defaultUnselectedButton;
+        return this.props.unselectedButtonStyle && this.props.unselectedButtonStyle;
+    }
+
+    _getButtonDisabledStyle() {
+        return this.props.disabledButtonStyle && this.props.disabledButtonStyle;
     }
 
     _getButtonIcon(action) {
@@ -109,7 +118,10 @@ export default class RichToolbar extends Component {
     }
 
     _onPress(action) {
+        const {onPressAddImage, onInsertLink} = this.props;
         switch (action) {
+            case actions.insertLink:
+                if (onInsertLink) return onInsertLink();
             case actions.setBold:
             case actions.setItalic:
             case actions.insertBulletsList:
@@ -133,37 +145,47 @@ export default class RichToolbar extends Component {
             case actions.setHR:
             case actions.setIndent:
             case actions.setOutdent:
-            case actions.insertLink:
+                this.state.editor.showAndroidKeyboard();
                 this.state.editor._sendAction(action, 'result');
                 break;
             case actions.insertImage:
-                if (this.props.onPressAddImage) {
-                    this.props.onPressAddImage();
-                }
+                onPressAddImage && onPressAddImage();
+                break;
+            default:
+                this.props[action] && this.props[action]();
                 break;
         }
     }
 
     _defaultRenderAction(action, selected) {
-        const icon = this._getButtonIcon(action);
-        const {iconSize = 50} = this.props;
+        let that = this;
+        const icon = that._getButtonIcon(action);
+        const {iconSize = 50, disabled} = that.props;
+        const style = selected ? that._getButtonSelectedStyle() : that._getButtonUnselectedStyle();
+        const tintColor = disabled
+            ? that.props.disabledIconTint
+            : selected
+            ? that.props.selectedIconTint
+            : that.props.iconTint;
         return (
             <TouchableOpacity
                 key={action}
-                style={[
-                    {height: iconSize, width: iconSize, justifyContent: 'center'},
-                    selected ? this._getButtonSelectedStyle() : this._getButtonUnselectedStyle(),
-                ]}
-                onPress={() => this._onPress(action)}>
+                disabled={disabled}
+                style={[{width: iconSize, justifyContent: 'center'}, style]}
+                onPress={() => that._onPress(action)}>
                 {icon ? (
-                    <Image
-                        source={icon}
-                        style={{
-                            tintColor: selected ? this.props.selectedIconTint : this.props.iconTint,
-                            height: iconSize,
-                            width: iconSize,
-                        }}
-                    />
+                    typeof icon === 'function' ? (
+                        icon({selected, disabled, tintColor, iconSize})
+                    ) : (
+                        <Image
+                            source={icon}
+                            style={{
+                                tintColor: tintColor,
+                                height: iconSize,
+                                width: iconSize,
+                            }}
+                        />
+                    )
                 ) : null}
             </TouchableOpacity>
         );
@@ -176,11 +198,13 @@ export default class RichToolbar extends Component {
     }
 
     render() {
-        const {style} = this.props;
+        const {style, disabled} = this.props;
+        const vStyle = [styles.barContainer, style, disabled && this._getButtonDisabledStyle()];
         return (
-            <View style={[styles.barContainer, style]}>
+            <View style={vStyle}>
                 <FlatList
                     horizontal
+                    keyboardShouldPersistTaps={'always'}
                     keyExtractor={(item, index) => item.action + '-' + index}
                     data={this.state.data}
                     alwaysBounceHorizontal={false}
@@ -193,10 +217,6 @@ export default class RichToolbar extends Component {
 }
 
 const styles = StyleSheet.create({
-    defaultSelectedButton: {
-        backgroundColor: 'red',
-    },
-    defaultUnselectedButton: {},
     barContainer: {
         height: 50,
         backgroundColor: '#D3D3D3',

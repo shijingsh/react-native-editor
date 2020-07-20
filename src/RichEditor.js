@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {WebView} from 'react-native-webview';
 import {actions, messages} from './const';
-import {Dimensions, PixelRatio, Platform, StyleSheet, View} from 'react-native';
+import {Dimensions, Keyboard, Platform, StyleSheet, TextInput, View} from 'react-native';
 import {createHTML} from './editor';
 
 const PlatformIOS = Platform.OS === 'ios';
@@ -10,6 +10,10 @@ export default class RichTextEditor extends Component {
     // static propTypes = {
     //     initialContentHTML: PropTypes.string,
     //     editorInitializedCallback: PropTypes.func,
+    //     onChange: PropTypes.func,
+    //     onHeightChange: PropTypes.func,
+    //     initialFocus: PropTypes.bool,
+    //     disabled: PropTypes.bool,
     // };
 
     static defaultProps = {
@@ -17,11 +21,16 @@ export default class RichTextEditor extends Component {
         style: {},
         placeholder: '',
         initialContentHTML: '',
+        initialFocus: false,
+        disabled: false,
+        useContainer: true,
+        editorInitializedCallback: () => {},
     };
 
     constructor(props) {
         super(props);
         let that = this;
+        that.renderWebView = that.renderWebView.bind(that);
         that.onMessage = that.onMessage.bind(that);
         that._sendAction = that._sendAction.bind(that);
         that.registerToolbar = that.registerToolbar.bind(that);
@@ -29,60 +38,62 @@ export default class RichTextEditor extends Component {
         that._onKeyboardWillHide = that._onKeyboardWillHide.bind(that);
         that.init = that.init.bind(that);
         that.setRef = that.setRef.bind(that);
-        that.isInit = false;
+        that._keyOpen = false;
         that.selectionChangeListeners = [];
-        const {editorStyle: {backgroundColor, color, placeholderColor} = {}, html} = props;
+        const {editorStyle: {backgroundColor, color, placeholderColor, cssText, contentCSSText} = {}, html} = props;
         that.state = {
-            html: {html: html || createHTML({backgroundColor, color, placeholderColor})},
+            html: {html: html || createHTML({backgroundColor, color, placeholderColor, cssText, contentCSSText})},
             keyboardHeight: 0,
             height: 0,
+            isInit: false,
         };
         that.focusListeners = [];
     }
 
-    // componentWillMount() {
-    // if (PlatformIOS) {
-    //     this.keyboardEventListeners = [
-    //         Keyboard.addListener('keyboardWillShow', this._onKeyboardWillShow),
-    //         Keyboard.addListener('keyboardWillHide', this._onKeyboardWillHide)
-    //     ];
-    // } else {
-    //     this.keyboardEventListeners = [
-    //         Keyboard.addListener('keyboardDidShow', this._onKeyboardWillShow),
-    //         Keyboard.addListener('keyboardDidHide', this._onKeyboardWillHide)
-    //     ];
-    // }
-    // }
+    componentDidMount() {
+        if (PlatformIOS) {
+            this.keyboardEventListeners = [
+                Keyboard.addListener('keyboardWillShow', this._onKeyboardWillShow),
+                Keyboard.addListener('keyboardWillHide', this._onKeyboardWillHide),
+            ];
+        } else {
+            this.keyboardEventListeners = [
+                Keyboard.addListener('keyboardDidShow', this._onKeyboardWillShow),
+                Keyboard.addListener('keyboardDidHide', this._onKeyboardWillHide),
+            ];
+        }
+    }
 
     componentWillUnmount() {
-        this.intervalHeight && clearInterval(this.intervalHeight);
         // this.keyboardEventListeners.forEach((eventListener) => eventListener.remove());
     }
 
     _onKeyboardWillShow(event) {
+        this._keyOpen = true;
         // console.log('!!!!', event);
-        const newKeyboardHeight = event.endCoordinates.height;
+        /*const newKeyboardHeight = event.endCoordinates.height;
         if (this.state.keyboardHeight === newKeyboardHeight) {
             return;
         }
         if (newKeyboardHeight) {
             this.setEditorAvailableHeightBasedOnKeyboardHeight(newKeyboardHeight);
         }
-        this.setState({keyboardHeight: newKeyboardHeight});
+        this.setState({keyboardHeight: newKeyboardHeight});*/
     }
 
     _onKeyboardWillHide(event) {
-        this.setState({keyboardHeight: 0});
+        this._keyOpen = false;
+        // this.setState({keyboardHeight: 0});
     }
 
-    setEditorAvailableHeightBasedOnKeyboardHeight(keyboardHeight) {
+    /*setEditorAvailableHeightBasedOnKeyboardHeight(keyboardHeight) {
         const {top = 0, bottom = 0} = this.props.contentInset;
         const {marginTop = 0, marginBottom = 0} = this.props.style;
         const spacing = marginTop + marginBottom + top + bottom;
 
         const editorAvailableHeight = Dimensions.get('window').height - keyboardHeight - spacing;
         // this.setEditorHeight(editorAvailableHeight);
-    }
+    }*/
 
     onMessage(event) {
         try {
@@ -113,6 +124,10 @@ export default class RichTextEditor extends Component {
                     this.focusListeners.map((da) => da());
                     break;
                 }
+                case messages.CONTENT_CHANGE: {
+                    this.props.onChange && this.props.onChange(message.data);
+                    break;
+                }
                 case messages.OFFSET_HEIGHT:
                     this.setWebHeight(message.data);
                     break;
@@ -124,8 +139,10 @@ export default class RichTextEditor extends Component {
 
     setWebHeight = (height) => {
         // console.log(height);
+        const {onHeightChange, useContainer} = this.props;
         if (height !== this.state.height) {
-            this.setState({height});
+            useContainer && this.setState({height});
+            onHeightChange && onHeightChange(height);
         }
     };
 
@@ -133,14 +150,16 @@ export default class RichTextEditor extends Component {
         let jsonString = JSON.stringify({type, name: action, data});
         if (this.webviewBridge) {
             this.webviewBridge.postMessage(jsonString);
-            // console.log(jsonString)
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {editorStyle} = this.props;
+        const {editorStyle, disabled} = this.props;
         if (prevProps.editorStyle !== editorStyle) {
             editorStyle && this.setContentStyle(editorStyle);
+        }
+        if (disabled !== prevProps.disabled) {
+            this.setDisable(disabled);
         }
     }
 
@@ -148,29 +167,35 @@ export default class RichTextEditor extends Component {
         this.webviewBridge = ref;
     }
 
-    renderWebView = () => {
-        const {html, editorStyle, useContainer, ...rest} = this.props;
-        const {html: viewHTML} = this.state;
+    renderWebView() {
+        let that = this;
+        const {html, editorStyle, useContainer, ...rest} = that.props;
+        const {html: viewHTML} = that.state;
+        // webview dark theme bug
+        const opacity = that.state.isInit ? 1 : 0;
         return (
-            <WebView
-                useWebKit={true}
-                scrollEnabled={false}
-                hideKeyboardAccessoryView={true}
-                keyboardDisplayRequiresUserAction={false}
-                {...rest}
-                ref={this.setRef}
-                onMessage={this.onMessage}
-                originWhitelist={['*']}
-                dataDetectorTypes={'none'}
-                domStorageEnabled={false}
-                bounces={false}
-                javaScriptEnabled={true}
-                source={viewHTML}
-                opacity={this.isInit ? 1 : 0}
-                onLoad={this.init}
-            />
+            <>
+                <WebView
+                    useWebKit={true}
+                    scrollEnabled={false}
+                    hideKeyboardAccessoryView={true}
+                    keyboardDisplayRequiresUserAction={false}
+                    {...rest}
+                    ref={that.setRef}
+                    onMessage={that.onMessage}
+                    originWhitelist={['*']}
+                    dataDetectorTypes={'none'}
+                    domStorageEnabled={false}
+                    bounces={false}
+                    javaScriptEnabled={true}
+                    source={viewHTML}
+                    opacity={opacity}
+                    onLoad={that.init}
+                />
+                {Platform.OS === 'android' && <TextInput ref={(ref) => (that._input = ref)} style={styles._input} />}
+            </>
         );
-    };
+    }
 
     render() {
         let {height} = this.state;
@@ -178,7 +203,7 @@ export default class RichTextEditor extends Component {
         // useContainer is an optional prop with default value of true
         // If set to true, it will use a View wrapper with styles and height.
         // If set to false, it will not use a View wrapper
-        const {useContainer = true, style} = this.props;
+        const {useContainer, style} = this.props;
 
         if (useContainer) {
             return (
@@ -217,30 +242,73 @@ export default class RichTextEditor extends Component {
         this._sendAction(actions.content, 'setContentStyle', styles);
     }
 
+    setDisable(dis) {
+        this._sendAction(actions.content, 'setDisable', !!dis);
+    }
+
     blurContentEditor() {
         this._sendAction(actions.content, 'blur');
     }
 
     focusContentEditor() {
+        this.showAndroidKeyboard();
         this._sendAction(actions.content, 'focus');
+    }
+
+    /**
+     * open android keyboard
+     * @platform android
+     */
+    showAndroidKeyboard() {
+        let that = this;
+        if (Platform.OS === 'android') {
+            !that._keyOpen && that._input.focus();
+            that.webviewBridge.requestFocus && that.webviewBridge.requestFocus();
+        }
     }
 
     insertImage(attributes) {
         this._sendAction(actions.insertImage, 'result', attributes);
     }
 
-    init() {
-        let that = this;
-        that.isInit = true;
-        that.setContentHTML(this.props.initialContentHTML);
-        that.setPlaceholder(this.props.placeholder);
-        that.props.editorInitializedCallback && that.props.editorInitializedCallback();
-
-        this.intervalHeight = setInterval(function () {
-            that._sendAction(actions.updateHeight);
-        }, 200);
+    insertVideo(attributes) {
+        this._sendAction(actions.insertVideo, 'result', attributes);
     }
 
+    insertText(text) {
+        this._sendAction(actions.insertText, 'result', text);
+    }
+
+    insertHTML(html) {
+        this._sendAction(actions.insertHTML, 'result', html);
+    }
+
+    insertLink(title, url) {
+        if (url) {
+            this.showAndroidKeyboard();
+            this._sendAction(actions.insertLink, 'result', {title, url});
+        }
+    }
+
+    init() {
+        let that = this;
+        const {initialFocus, initialContentHTML, placeholder, editorInitializedCallback, disabled} = that.props;
+        that.setContentHTML(initialContentHTML);
+        that.setPlaceholder(placeholder);
+        that.setDisable(disabled);
+        editorInitializedCallback();
+
+        // initial request focus
+        initialFocus && !disabled && that.focusContentEditor();
+        // no visible ?
+        that._sendAction(actions.init);
+        that.setState({isInit: true});
+    }
+
+    /**
+     * @deprecated please use onChange
+     * @returns {Promise}
+     */
     async getContentHtml() {
         return new Promise((resolve, reject) => {
             this.contentResolve = resolve;
@@ -257,45 +325,12 @@ export default class RichTextEditor extends Component {
 }
 
 const styles = StyleSheet.create({
-    modal: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    innerModal: {
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        paddingTop: 20,
-        paddingBottom: PlatformIOS ? 0 : 20,
-        paddingLeft: 20,
-        paddingRight: 20,
-        alignSelf: 'stretch',
-        margin: 40,
-        borderRadius: PlatformIOS ? 8 : 2,
-    },
-    button: {
-        fontSize: 16,
-        color: '#4a4a4a',
-        textAlign: 'center',
-    },
-    inputWrapper: {
-        marginTop: 5,
-        marginBottom: 10,
-        borderBottomColor: '#4a4a4a',
-        borderBottomWidth: PlatformIOS ? 1 / PixelRatio.get() : 0,
-    },
-    inputTitle: {
-        color: '#4a4a4a',
-    },
-    input: {
-        height: PlatformIOS ? 20 : 40,
-        paddingTop: 0,
-    },
-    lineSeparator: {
-        height: 1 / PixelRatio.get(),
-        backgroundColor: '#d5d5d5',
-        marginLeft: -20,
-        marginRight: -20,
-        marginTop: 20,
+    _input: {
+        position: 'absolute',
+        width: 1,
+        height: 1,
+        zIndex: -999,
+        bottom: -999,
+        left: -999,
     },
 });
