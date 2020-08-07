@@ -10,7 +10,7 @@
     "rich text editor",
     "rich text"
   ],
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "rich text editor for react-native",
   "main": "src/index.js",
   "license": "SEE LICENSE IN LICENSE",

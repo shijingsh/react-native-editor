@@ -55,7 +55,7 @@ The editor component. Simply place this component in your view hierarchy to rece
 `RichEditor` also has methods that can be used on its `ref` to  set:
 
 *  `setContentHTML(html:string)`
-*  `appendContentHTML(html:string)`
+*  `insertHTML(html:string)`
 *  `insertImage(url:string) `
 *  `setContentFocusHandler(handler: Function)`
 *  `blurContentEditor()`

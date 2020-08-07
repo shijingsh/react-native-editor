@@ -29,7 +29,7 @@ export default class RichTextExample extends Component {
     }
 
     onPressAppendInsert = () => {
-        this.richText.appendContentHTML("<p>append by appendContentHTML</p>");
+        this.richText.insertHTML("<p>append by appendContentHTML</p>");
     }
 
     onPressGotFocus = () => {
